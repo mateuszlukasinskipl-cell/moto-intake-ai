@@ -26,7 +26,7 @@ interface AIResult {
 
 // --- Configuration Constants ---
 // Updated to new token provided by user
-const DEFAULT_NOTION_TOKEN = "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";
+const DEFAULT_NOTION_TOKEN = "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";
 const DEFAULT_NOTION_DB_ID = "6335b6e7997a4097b08f2cba5feb5c6a"; 
 const DEFAULT_IMGBB_KEY = "93ac0ba7b43294b8b56b60c044d1f340";
 
@@ -755,7 +755,9 @@ const App = () => {
                      <div>
                         <label className="block text-sm font-medium mb-1">Login</label>
                         <input 
+                            key="login-user"
                             type="text" 
+                            name="login_username"
                             value={loginUser} 
                             onChange={(e) => setLoginUser(e.target.value)} 
                             className="w-full border rounded p-2"
@@ -765,7 +767,9 @@ const App = () => {
                      <div>
                         <label className="block text-sm font-medium mb-1">Hasło</label>
                         <input 
+                            key="login-pass"
                             type="password" 
+                            name="login_password"
                             value={loginPass} 
                             onChange={(e) => setLoginPass(e.target.value)} 
                             className="w-full border rounded p-2"
@@ -781,23 +785,58 @@ const App = () => {
                 <div className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium mb-1">Notion Token</label>
-                    <input type="password" value={notionToken} onChange={(e) => setNotionToken(e.target.value)} className="w-full border rounded p-2 text-sm font-mono"/>
+                    <div className="flex gap-2">
+                        <input 
+                            key="notion-token"
+                            type="password" 
+                            name="notion_token"
+                            autoComplete="new-password"
+                            value={notionToken} 
+                            onChange={(e) => setNotionToken(e.target.value)} 
+                            className="w-full border rounded p-2 text-sm font-mono"
+                        />
+                        <button 
+                            onClick={() => setNotionToken(DEFAULT_NOTION_TOKEN)}
+                            className="text-xs bg-slate-200 hover:bg-slate-300 px-2 rounded whitespace-nowrap"
+                            title="Przywróć domyślny token z kodu"
+                        >
+                            Reset
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-1">Database ID</label>
                     {/* Changed to type password to mask the ID */}
-                    <input type="password" value={notionDbId} onChange={(e) => setNotionDbId(e.target.value)} className="w-full border rounded p-2 text-sm font-mono"/>
+                    <input 
+                        key="notion-db"
+                        type="password" 
+                        name="notion_db_id"
+                        autoComplete="new-password"
+                        value={notionDbId} 
+                        onChange={(e) => setNotionDbId(e.target.value)} 
+                        className="w-full border rounded p-2 text-sm font-mono"
+                    />
                 </div>
                 <div className="bg-yellow-50 p-2 rounded border border-yellow-200">
                     <label className="block text-sm font-bold mb-1 text-yellow-800">Nazwa 1. kolumny (Title)</label>
-                    <input type="text" value={notionTitleKey} onChange={(e) => setNotionTitleKey(e.target.value)} className="w-full border rounded p-2 text-sm"/>
+                    <input 
+                        key="notion-title"
+                        type="text" 
+                        name="notion_title_col"
+                        value={notionTitleKey} 
+                        onChange={(e) => setNotionTitleKey(e.target.value)} 
+                        className="w-full border rounded p-2 text-sm"
+                    />
                 </div>
                 
                 {/* IMGBB SETTINGS */}
                 <div className="bg-indigo-50 p-2 rounded border border-indigo-200">
                     <label className="block text-sm font-bold mb-1 text-indigo-800">ImgBB API Key</label>
                     <input 
+                        key="imgbb-key"
                         type="password" 
+                        name="imgbb_api_key"
+                        autoComplete="new-password"
                         value={imgbbApiKey} 
                         onChange={(e) => setImgbbApiKey(e.target.value)} 
                         placeholder="Wklej API Key tutaj"
@@ -810,21 +849,30 @@ const App = () => {
                     <label className="block text-sm font-bold mb-1 text-green-800">Konfiguracja EmailJS (Wysyłka)</label>
                     <div className="space-y-2">
                         <input 
+                            key="email-service"
                             type="password" 
+                            name="email_service_id"
+                            autoComplete="new-password"
                             value={emailServiceId} 
                             onChange={(e) => setEmailServiceId(e.target.value)} 
                             placeholder="Service ID (np. service_xyz)"
                             className="w-full border rounded p-2 text-sm font-mono"
                         />
                         <input 
+                            key="email-template"
                             type="password" 
+                            name="email_template_id"
+                            autoComplete="new-password"
                             value={emailTemplateId} 
                             onChange={(e) => setEmailTemplateId(e.target.value)} 
                             placeholder="Template ID (np. template_abc)"
                             className="w-full border rounded p-2 text-sm font-mono"
                         />
                         <input 
+                            key="email-key"
                             type="password" 
+                            name="email_public_key"
+                            autoComplete="new-password"
                             value={emailPublicKey} 
                             onChange={(e) => setEmailPublicKey(e.target.value)} 
                             placeholder="Public Key"
