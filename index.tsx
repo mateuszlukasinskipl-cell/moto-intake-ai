@@ -264,11 +264,31 @@ const App = () => {
         { "damages": "Szczegółowy opis widocznych uszkodzeń", "symptoms": "Potencjalne objawy techniczne" }
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: { parts: [...imageParts.map(part => ({ inlineData: part })), { text: prompt }] },
-        config: { responseMimeType: "application/json" }
-      });
+      // Helper for Retry Logic
+      const generateWithRetry = async (retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                // Using 'gemini-2.0-flash' as it is currently the most stable efficient model.
+                return await ai.models.generateContent({
+                    model: 'gemini-2.0-flash',
+                    contents: { parts: [...imageParts.map(part => ({ inlineData: part })), { text: prompt }] },
+                    config: { responseMimeType: "application/json" }
+                });
+            } catch (err: any) {
+                const isOverloaded = err.message?.includes('503') || err.message?.includes('overloaded') || err.status === 503;
+                if (isOverloaded && i < retries - 1) {
+                    console.warn(`Model overloaded (503), retrying... attempt ${i + 1}/${retries}`);
+                    // Exponential backoff: 1s, 2s, 4s
+                    await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+                    continue;
+                }
+                throw err;
+            }
+        }
+        throw new Error("Model unavailable after retries");
+      };
+
+      const response = await generateWithRetry();
 
       const text = response.text;
       if (text) {
