@@ -1,0 +1,7 @@
+{
+  "description": "Moto Intake AI - Intelligent Vehicle Service Intake",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "name": "Moto Intake AI"
+}
