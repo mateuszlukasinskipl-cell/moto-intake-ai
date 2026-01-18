@@ -29,6 +29,32 @@ const DEFAULT_NOTION_DB_ID = "6335b6e7997a4097b08f2cba5feb5c6am";
 const DEFAULT_IMGBB_KEY = "93ac0ba7b43294b8b56b60c044d1f340";
 
 // --- Helper Functions ---
+
+// Safe API Key extraction for Browser Environments
+const getGeminiApiKey = (): string => {
+  try {
+    // 1. Check standard process.env (Node/Webpack/CRA)
+    if (typeof process !== 'undefined' && process.env) {
+      if (process.env.API_KEY) return process.env.API_KEY;
+      if (process.env.REACT_APP_API_KEY) return process.env.REACT_APP_API_KEY;
+      if (process.env.VITE_API_KEY) return process.env.VITE_API_KEY;
+      if (process.env.NEXT_PUBLIC_API_KEY) return process.env.NEXT_PUBLIC_API_KEY;
+    }
+    
+    // 2. Check Vite's import.meta.env
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      // @ts-ignore
+      if (import.meta.env.VITE_API_KEY) return import.meta.env.VITE_API_KEY;
+      // @ts-ignore
+      if (import.meta.env.API_KEY) return import.meta.env.API_KEY;
+    }
+  } catch (e) {
+    console.warn("Error reading env vars", e);
+  }
+  return '';
+};
+
 const fileToInlineData = async (file: File): Promise<{ mimeType: string; data: string }> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -218,12 +244,18 @@ const App = () => {
   const analyzeWithAI = async () => {
     if (images.length === 0) { setError("Proszę dodać przynajmniej jedno zdjęcie."); return; }
     
+    const apiKey = getGeminiApiKey();
+    if (!apiKey) {
+      setError("Brak Klucza API Google! Skonfiguruj zmienną środowiskową 'API_KEY' (lub 'VITE_API_KEY', 'NEXT_PUBLIC_API_KEY') w ustawieniach projektu Vercel.");
+      return;
+    }
+
     setIsAnalyzing(true);
     setError(null);
     setAiResult(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       const imageParts = await Promise.all(images.map(img => fileToInlineData(img)));
       
       const prompt = `
