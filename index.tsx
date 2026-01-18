@@ -25,7 +25,8 @@ interface AIResult {
 }
 
 // --- Configuration Constants ---
-const DEFAULT_NOTION_TOKEN = "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";
+// Updated to new token provided by user
+const DEFAULT_NOTION_TOKEN = "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";
 const DEFAULT_NOTION_DB_ID = "6335b6e7997a4097b08f2cba5feb5c6a"; 
 const DEFAULT_IMGBB_KEY = "93ac0ba7b43294b8b56b60c044d1f340";
 
@@ -286,7 +287,13 @@ const App = () => {
     const storedTemplateId = localStorage.getItem('moto_email_template');
     const storedPublicKey = localStorage.getItem('moto_email_key');
     
-    if (storedToken) setNotionToken(storedToken);
+    // Removed auto-correction logic. Using the stored token as-is, or default.
+    if (storedToken) {
+        setNotionToken(storedToken);
+    } else {
+        setNotionToken(DEFAULT_NOTION_TOKEN);
+    }
+
     if (storedDb) setNotionDbId(storedDb);
     if (storedTitleKey) setNotionTitleKey(storedTitleKey);
     if (storedImgbb) setImgbbApiKey(storedImgbb);
@@ -515,9 +522,9 @@ const App = () => {
       const generateWithRetry = async (retries = 3) => {
         for (let i = 0; i < retries; i++) {
             try {
-                // Using 'gemini-2.0-flash' as it is currently the most stable efficient model.
+                // Using 'gemini-3-flash-preview' as it is the recommended standard and likely has available quota/preview access.
                 return await ai.models.generateContent({
-                    model: 'gemini-2.0-flash',
+                    model: 'gemini-3-flash-preview',
                     contents: { parts: [...imageParts.map(part => ({ inlineData: part })), { text: prompt }] },
                     config: { responseMimeType: "application/json" }
                 });
@@ -545,7 +552,14 @@ const App = () => {
       }
     } catch (err: any) {
       console.error(err);
-      setError("Błąd analizy AI: " + err.message);
+      
+      // Improve Error Handling for 429 Quota Exceeded
+      let errorMsg = err.message || "Błąd nieznany";
+      if (err.message?.includes('429') || err.status === 429 || err.message?.includes('Quota exceeded')) {
+          errorMsg = "Wyczerpano limit zapytań (Quota Exceeded 429). Model AI jest obecnie niedostępny dla tego klucza. Odczekaj chwilę lub sprawdź limity na koncie Google Cloud.";
+      }
+      
+      setError("Błąd analizy AI: " + errorMsg);
     } finally {
       setIsAnalyzing(false);
     }
@@ -694,7 +708,8 @@ const App = () => {
              throw new Error("Błąd 404: Nie znaleziono bazy danych w Notion. Sprawdź ID oraz czy dodałeś 'Connection' w ustawieniach bazy.");
         }
         if (errorJson.code === "unauthorized") {
-             throw new Error("Błąd 401: Zły Token Notion.");
+             // Reverted to generic error message as we are not enforcing secret_ anymore
+             throw new Error("Błąd 401: Zły Token Notion (Unauthorized).");
         }
         if (errorJson.message) {
             // Ensure we show the exact property missing
