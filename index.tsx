@@ -26,7 +26,7 @@ interface AIResult {
 
 // --- Configuration Constants ---
 // Updated to new token provided by user
-const DEFAULT_NOTION_TOKEN = "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";
+const DEFAULT_NOTION_TOKEN = "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";
 const DEFAULT_NOTION_DB_ID = "6335b6e7997a4097b08f2cba5feb5c6a"; 
 const DEFAULT_IMGBB_KEY = "93ac0ba7b43294b8b56b60c044d1f340";
 
