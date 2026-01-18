@@ -25,10 +25,11 @@ interface AIResult {
 }
 
 // --- Configuration Constants ---
-// Updated to new token provided by user
-const DEFAULT_NOTION_TOKEN = "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";
+// CRITICAL: Removed hardcoded tokens to prevent "Push blocked: secret detected" errors.
+// Please enter these values in the App Settings (Gear Icon) -> they will be saved to your LocalStorage.
+const DEFAULT_NOTION_TOKEN = ""; 
 const DEFAULT_NOTION_DB_ID = "6335b6e7997a4097b08f2cba5feb5c6a"; 
-const DEFAULT_IMGBB_KEY = "93ac0ba7b43294b8b56b60c044d1f340";
+const DEFAULT_IMGBB_KEY = "";
 
 // EmailJS Defaults
 const DEFAULT_EMAIL_SERVICE_ID = "service_7e1rkgw";
@@ -36,8 +37,8 @@ const DEFAULT_EMAIL_TEMPLATE_ID = "template_fi5isnq";
 const DEFAULT_EMAIL_PUBLIC_KEY = "jex7e9fV6Rd9GVEtN";
 
 // Settings Credentials
-const SETTINGS_LOGIN = "matepl";
-const SETTINGS_PASS = "sd@425Sdw!!dc";
+const SETTINGS_LOGIN = "admin";
+const SETTINGS_PASS = "password";
 
 // --- Helper Functions ---
 
